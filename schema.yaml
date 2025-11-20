@@ -1,0 +1,29 @@
+# schema.yaml
+
+# 1. Structure attendue des documents dans MongoDB (Raw Data)
+mongodb_schema:
+  columns:
+    _id: 
+      type: string
+      description: "GitHub Username / User ID"
+    date_ajout:
+      type: date
+      description: "Date de collecte"
+    repos: 
+      type: list
+      description: "Liste des noms complets des dépôts (owner/repo)"
+      item_type: string
+
+# 2. (Optionnel) Si vous avez besoin de valider le format du string
+repo_name_format:
+  regex: "^[a-zA-Z0-9-._]+/[a-zA-Z0-9-._]+$" # Vérifie le format "owner/repo"
+
+# 3. Structure des données transformées pour le modèle (Reste inchangé)
+model_input_schema:
+  columns:
+    user_idx: 
+      type: int
+    repo_idx: 
+      type: int
+    interaction: 
+      type: float
