@@ -50,12 +50,23 @@ Nous ne conservons un utilisateur dans notre base MongoDB que si :
 
 **Pourquoi ?** Ce filtre vise à isoler les utilisateurs expérimentés qui effectuent une curation de haute qualité sur des projets technologiques majeurs, permettant à l'algorithme d'apprendre des motifs robustes.
 
-### Stockage (MongoDB)
+### Schéma MongoDB
+Les données sont stockées dans une collection (par exemple `users`).
+**Structure réelle d'un document :**
 
-Les données sont structurées sous forme de documents JSON :
-
-- **Collection :** users
-- **Format :** Identifiant utilisateur et liste des IDs de dépôts suivis.
+```json
+{
+  "_id": "vanpelt",               // Identifiant utilisateur (String)
+  "date_ajout": "2025-11-17...",  // Date d'extraction
+  "repos": [                      // Liste simple de Strings ("owner/repo")
+    "obra/superpowers",
+    "jdx/mise",
+    "dop251/goja",
+    "grafana/k6"
+    // ... (100 éléments filtrés)
+  ]
+}
+```
 
 ## 🧠 Modélisation (SVD)
 
