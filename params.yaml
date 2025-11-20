@@ -1,0 +1,30 @@
+# params.yaml
+
+base:
+  project: gridPower
+  random_state: 42
+  target_col: interaction # Valeur implicite (1) pour une star
+
+data_ingestion:
+  database: idx_database
+  collection: users
+  # Mapping des colonnes
+  user_id_col: _id
+  item_list_col: repos
+
+data_transformation:
+  # Chemins relatifs où sauvegarder les objets transformés (ex: mappings ID -> Index)
+  user_map_path: artifacts/transformation/user_map.pkl
+  item_map_path: artifacts/transformation/item_map.pkl
+  matrix_path: artifacts/transformation/interaction_matrix.npz
+
+svd_model:
+  # Paramètres pour sklearn.decomposition.TruncatedSVD
+  n_components: 50       # Dimension de l'espace latent (à ajuster selon la performance)
+  n_iter: 5              # Nombre d'itérations pour le solveur randomized
+  algorithm: randomized  # 'randomized' est plus rapide pour les grandes matrices
+  tol: 0.0               # Tolérance pour la convergence (0.0 = défaut sklearn)
+  model_path: artifacts/model/svd_model.pkl
+
+training:
+  test_size: 0.2         # Si vous faites une validation croisée
