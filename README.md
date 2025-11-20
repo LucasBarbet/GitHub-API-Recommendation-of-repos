@@ -17,8 +17,7 @@ L'objectif est de suggérer des dépôts pertinents à un utilisateur en analysa
 
 Le projet suit une structure modulaire standard pour les pipelines de Machine Learning, séparant la configuration, le code source (src) et les expérimentations (research).
 
-Plaintext
-
+```text
 ├── .github/workflows/ # CI/CD pipelines  
 ├── config/ # Configuration globale (config.yaml)  
 ├── research/ # Notebooks pour l'analyse exploratoire (trails.ipynb)  
@@ -35,7 +34,8 @@ Plaintext
 ├── params.yaml # Hyperparamètres du modèle SVD  
 ├── schema.yaml # Schéma des données  
 ├── Dockerfile # Conteneurisation de l'application  
-└── requirements.txt # Dépendances Python  
+└── requirements.txt # Dépendances Python
+```
 
 ## 🔍 Logique de Collecte & Données
 
@@ -81,8 +81,8 @@ Nous utilisons TruncatedSVD de la bibliothèque **scikit-learn**.
 
 - Cloner le dépôt :  
     Bash  
-    git clone <https://github.com/votre-orga/github-recommender.git>  
-    cd github-recommender  
+    git clone <https://github.com/LucasBarbet/GitHub-API-Recommendation-of-repos.git>  
+    cd GitHub-API-Recommendation-of-repos  
 
 - Créer un environnement virtuel et installer les dépendances :  
     Bash  
