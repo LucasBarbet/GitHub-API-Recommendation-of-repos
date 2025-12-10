@@ -1,7 +1,7 @@
 # params.yaml
 
 base:
-  project: gridPower
+  project: GitHubAPIRecommendationOfRepos
   random_state: 42
   target_col: interaction # Valeur implicite (1) pour une star
 
