@@ -1,7 +1,7 @@
 import os
 import pandas as pd
 from pathlib import Path
-from ..utils.common import load_bin  # <--- On importe la bonne fonction
+from ..utils.common import load_bin
 from ..entity.config_entity import ModelTrainerConfig, DataTransformationConfig
 
 class PredictionPipeline:
