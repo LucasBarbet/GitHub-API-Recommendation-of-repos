@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 import os
-from constants import ARTIFACTS_DIR
+from ..constants import ARTIFACTS_DIR
 
 @dataclass
 class DataIngestionConfig:

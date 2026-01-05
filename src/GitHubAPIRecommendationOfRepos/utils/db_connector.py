@@ -1,8 +1,10 @@
+import os
 from pymongo import MongoClient
-import constants as const
+from ..constants import MONGO_DATABASE_NAME
 
 def get_database():
+    mongo_uri = os.environ.get("MONGO_URI", "mongodb://localhost:27017/")
     # Crée la connexion
-    client = MongoClient(const.MONGO_URI)
+    client = MongoClient(mongo_uri)
     # Retourne la base de données spécifique
-    return client[const.DB_NAME]
+    return client[MONGO_DATABASE_NAME]
