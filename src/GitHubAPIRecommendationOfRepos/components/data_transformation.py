@@ -4,7 +4,7 @@ import pandas as pd
 import ast
 from sklearn.base import BaseEstimator, TransformerMixin
 from entity.config_entity import DataTransformationConfig
-from utils.common import save_object, create_directories
+from utils.common import save_bin, create_directories
 
 # Cette classe convertit la colonne 'repos' (liste) en 'nb_repos' (int)
 class FeatureGenerator(BaseEstimator, TransformerMixin):
@@ -65,7 +65,7 @@ class DataTransformation:
             # 4. Sauvegarde de l'objet "processeur" (le FeatureGenerator)
             # C'est CRUCIAL en MLOps : on veut appliquer exactement la même transformation
             # aux nouvelles données qui arriveront plus tard.
-            save_object(
+            save_bin(
                 file_path=self.config.preprocessor_obj_file_path,
                 obj=self.feature_generator
             )

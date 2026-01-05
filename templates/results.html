@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Résultats pour {{ username }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1>🚀 Recommandations pour <span>{{ username }}</span></h1>
+            <p>Basé sur vos dépôts actuels, voici ce qui pourrait vous intéresser :</p>
+        </header>
+
+        {% if recommendations %}
+        <div class="results-grid">
+            {% for repo in recommendations %}
+            <div class="repo-card">
+                <h3>{{ repo }}</h3>
+                <p>Projet suggéré par notre IA</p>
+                <a href="https://github.com/{{ repo }}" target="_blank" class="btn-github">Voir sur GitHub</a>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="no-results">
+            <p>Aucune recommandation trouvée pour le moment.</p>
+        </div>
+        {% endif %}
+
+        <div class="actions">
+            <a href="/" class="btn-back">⬅️ Nouvelle recherche</a>
+        </div>
+    </div>
+</body>
+
+</html>
