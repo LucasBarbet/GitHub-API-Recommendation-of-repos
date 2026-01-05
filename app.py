@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request
-from components.prediction import PredictionPipeline
-from utils.db_connector import get_database
-from constants import MONGO_COLLECTION_NAME
+from src.GitHubAPIRecommendationOfRepos.components.prediction import PredictionPipeline
+from src.GitHubAPIRecommendationOfRepos.utils.db_connector import get_database
+from src.GitHubAPIRecommendationOfRepos.constants import MONGO_COLLECTION_NAME
 
 app = Flask(__name__)
 
