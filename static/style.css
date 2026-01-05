@@ -1,0 +1,121 @@
+/* --- Base --- */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f0f2f5;
+    color: #333;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+.container {
+    background: white;
+    width: 90%;
+    max-width: 800px;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+h1 {
+    color: #24292e;
+    margin-bottom: 0.5rem;
+}
+
+h1 span {
+    color: #0366d6;
+}
+
+/* Bleu GitHub */
+
+/* --- Formulaire (Accueil) --- */
+form {
+    margin-top: 2rem;
+}
+
+input[type="text"] {
+    padding: 12px;
+    width: 70%;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 16px;
+    margin-right: 10px;
+}
+
+button {
+    padding: 12px 24px;
+    background-color: #2ea44f;
+    /* Vert GitHub */
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+button:hover {
+    background-color: #2c974b;
+}
+
+/* --- Grille de Résultats --- */
+.results-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1.5rem;
+    margin-top: 2rem;
+}
+
+.repo-card {
+    background: #fafbfc;
+    border: 1px solid #e1e4e8;
+    border-radius: 6px;
+    padding: 1.5rem;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.repo-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.repo-card h3 {
+    margin-top: 0;
+    font-size: 1.1rem;
+    color: #0366d6;
+    word-break: break-all;
+}
+
+.btn-github {
+    display: inline-block;
+    margin-top: 1rem;
+    text-decoration: none;
+    color: #586069;
+    font-size: 0.9rem;
+    border: 1px solid #d1d5da;
+    padding: 5px 10px;
+    border-radius: 4px;
+}
+
+.btn-github:hover {
+    background-color: #f3f4f6;
+}
+
+/* --- Bouton Retour --- */
+.actions {
+    margin-top: 2rem;
+}
+
+.btn-back {
+    text-decoration: none;
+    color: #586069;
+    font-weight: bold;
+}
+
+.btn-back:hover {
+    color: #0366d6;
+}

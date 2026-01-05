@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Recommandation GitHub</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+    <div class="container">
+        <h1>🔍 Trouvez votre prochain dépôt</h1>
+        <form action="/predict" method="post">
+            <label for="username">Nom d'utilisateur GitHub :</label>
+            <input type="text" id="username" name="username" placeholder="ex: skyhit" required>
+            <button type="submit">Recommander</button>
+        </form>
+    </div>
+</body>
+
+</html>

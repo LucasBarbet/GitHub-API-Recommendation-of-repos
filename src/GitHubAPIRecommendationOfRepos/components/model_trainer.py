@@ -1,7 +1,7 @@
 import pandas as pd
 from sklearn.ensemble import RandomForestRegressor
 from entity.config_entity import ModelTrainerConfig
-from utils.common import save_object
+from utils.common import save_bin
 
 class ModelTrainer:
     def __init__(self, config: ModelTrainerConfig):
@@ -24,7 +24,7 @@ class ModelTrainer:
             model.fit(X_train, y_train)
 
             # Sauvegarde du modèle (Artifact)
-            save_object(
+            save_bin(
                 file_path=self.config.trained_model_file_path,
                 obj=model
             )
