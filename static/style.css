@@ -36,6 +36,7 @@ h1 span {
 form {
     margin-top: 2rem;
 }
+
 form {
     margin-top: 2rem;
     display: flex;
@@ -53,6 +54,7 @@ input[type="text"] {
     font-size: 16px;
     margin-right: 16px;
 }
+
 input[type="text"] {
     padding: 12px;
     flex: 0 0 70%;
@@ -134,4 +136,35 @@ button:hover {
 
 .btn-back:hover {
     color: #0366d6;
+}
+
+/* Le bouton Dashboard sur l'accueil */
+.btn-dashboard {
+    display: inline-block;
+    background-color: #6f42c1;
+    /* Violet style "Stats" */
+    color: white;
+    padding: 8px 16px;
+    border-radius: 20px;
+    text-decoration: none;
+    font-size: 0.9rem;
+    margin-bottom: 20px;
+    transition: background 0.3s;
+}
+
+.btn-dashboard:hover {
+    background-color: #5a32a3;
+}
+
+/* Ajustement pour la page Dashboard qui est souvent plus large */
+.dashboard-container {
+    max-width: 1000px;
+    /* Plus large que le formulaire pour bien voir les graphes */
+}
+
+.iframe-wrapper {
+    margin: 20px 0;
+    border: 1px solid #e1e4e8;
+    border-radius: 8px;
+    overflow: hidden;
 }
