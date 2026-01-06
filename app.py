@@ -30,5 +30,9 @@ def predict():
     # 4. Afficher les résultats
     return render_template('results.html', username=username, recommendations=recommendations)
 
+@app.route('/dashboard')
+def dashboard():
+    return render_template('dashboard.html')
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=True)
