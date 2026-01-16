@@ -34,7 +34,8 @@ COPY app.py params.yaml schema.yaml ./
 ENV PATH="/app/.venv/bin:$PATH" \
     PYTHONPATH="/app/src:/app" \
     PYTHONDONTWRITEBYTECODE=1 \
-    PYTHONUNBUFFERED=1
+    PYTHONUNBUFFERED=1 \
+    MONGO_URI="mongodb://host.docker.internal:27017/"
 
 EXPOSE 5000
 

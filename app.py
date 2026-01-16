@@ -30,6 +30,21 @@ def predict():
     # 4. Afficher les résultats
     return render_template('results.html', username=username, recommendations=recommendations)
 
+@app.route('/add_user', methods=['POST'])
+def add_user():
+    username = request.form.get('username')
+    if not username:
+         return render_template('index.html', error="Veuillez entrer un nom d'utilisateur.")
+    
+    db = get_database()
+    collection = db[MONGO_COLLECTION_NAME]
+    
+    if collection.find_one({"username": username}):
+        return render_template('index.html', error=f"L'utilisateur {username} existe déjà !")
+        
+    collection.insert_one({"username": username, "repos": []})
+    return render_template('index.html', success=f"Utilisateur {username} ajouté avec succès !")
+
 @app.route('/dashboard')
 def dashboard():
     return render_template('dashboard.html')

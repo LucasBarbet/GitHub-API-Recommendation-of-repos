@@ -3,22 +3,56 @@
 
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Recommandation GitHub</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 
 <body>
-    <div class="container">
-        <h1>🔍 Trouvez votre prochain dépôt</h1>
-        <form action="/predict" method="post">
-            <label for="username">Nom d'utilisateur GitHub :</label>
-            <input type="text" id="username" name="username" placeholder="ex: skyhit" required>
-            <button type="submit">Recommander</button>
-        </form>
-        <p>
-            <a href="/dashboard" class="btn-dashboard">Voir les Statistiques Globales 📊</a>
-            <a href="http://localhost:5001" target="_blank" class="btn-mlflow">Accéder à MLFlow 🚀</a>
-        </p>
+    <div class="main-wrapper">
+        <div class="card intro-card">
+            <h1>🔍 GitHub Recommender</h1>
+            <p class="subtitle">Découvrez des dépôts pertinents basés sur votre profil</p>
+
+            <form action="/predict" method="post" class="predict-form">
+                <div class="input-group">
+                    <label for="username">Nom d'utilisateur GitHub</label>
+                    <input type="text" id="username" name="username" placeholder="ex: torvalds" required>
+                </div>
+                <button type="submit" class="btn-primary">Lancer la recommandation</button>
+            </form>
+
+            <div class="quick-links">
+                <a href="/dashboard" class="btn-ghost">📊 Dashboard</a>
+                <a href="http://localhost:5001" target="_blank" class="btn-ghost">🚀 MLFlow</a>
+            </div>
+        </div>
+
+        <div class="card secondary-card">
+            <h3>➕ Ajouter un utilisateur</h3>
+            <p class="small-text">Vous n'existez pas encore dans notre base ? Ajoutez-vous !</p>
+            <form action="/add_user" method="post" class="add-user-form">
+                <div class="input-group small-group">
+                    <input type="text" id="new_username" name="username" placeholder="Nom d'utilisateur" required>
+                    <button type="submit" class="btn-secondary">Ajouter</button>
+                </div>
+            </form>
+        </div>
+
+        {% if success %}
+        <div class="alert success">
+            {{ success }}
+        </div>
+        {% endif %}
+
+        {% if error %}
+        <div class="alert error">
+            {{ error }}
+        </div>
+        {% endif %}
     </div>
 </body>
 
