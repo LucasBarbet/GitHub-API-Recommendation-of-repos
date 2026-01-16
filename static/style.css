@@ -156,6 +156,24 @@ button:hover {
     background-color: #5a32a3;
 }
 
+.btn-mlflow {
+    display: inline-block;
+    background-color: #01abce;
+    /* MLFlow Blue */
+    color: white;
+    padding: 8px 16px;
+    border-radius: 20px;
+    text-decoration: none;
+    font-size: 0.9rem;
+    margin-bottom: 20px;
+    margin-left: 10px;
+    transition: background 0.3s;
+}
+
+.btn-mlflow:hover {
+    background-color: #018ba6;
+}
+
 /* Ajustement pour la page Dashboard qui est souvent plus large */
 .dashboard-container {
     max-width: 1000px;

@@ -3,6 +3,7 @@ mlflow==2.2.2
 notebook
 numpy
 scikit-learn
+scikit-surprise
 pymongo
 matplotlib
 python-box==6.0.2
@@ -14,4 +15,6 @@ joblib
 types-PyYAML
 Flask
 Flask-Cors
+torch
+scipy
 -e .
