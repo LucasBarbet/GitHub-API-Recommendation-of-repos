@@ -17,12 +17,13 @@
             <h1>🔍 GitHub Recommender</h1>
             <p class="subtitle">Découvrez des dépôts pertinents basés sur votre profil</p>
 
-            <form action="/predict" method="post" class="predict-form">
+            <form action="/prepare_prediction" method="post" class="predict-form">
                 <div class="input-group">
                     <label for="username">Nom d'utilisateur GitHub</label>
-                    <input type="text" id="username" name="username" placeholder="ex: torvalds" required>
+                    <input type="text" id="username" name="username" placeholder="ex: torvalds"
+                        value="{{ username if username else '' }}" required>
                 </div>
-                <button type="submit" class="btn-primary">Lancer la recommandation</button>
+                <button type="submit" class="btn-primary">Configurer la recommandation</button>
             </form>
 
             <div class="quick-links">

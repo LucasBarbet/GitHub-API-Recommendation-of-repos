@@ -10,7 +10,7 @@ class PredictionPipeline:
         self.model_path = ModelTrainerConfig().trained_model_file_path
         self.preprocessor_path = DataTransformationConfig().preprocessor_obj_file_path
 
-    def predict(self, username, user_repos):
+    def predict(self, username, user_repos, top_k=5):
         """
         Reçoit un utilisateur et ses repos, et renvoie une recommandation.
         """
@@ -38,7 +38,8 @@ class PredictionPipeline:
             # Exemple : Si c'est une classification de cluster, on pourrait renvoyer les tops repos du cluster.
             # Pour cet exemple MLOps, on renvoie une liste statique ou basée sur la logique métier.
             
-            return ["tensorflow/tensorflow", "keras-team/keras", "pytorch/pytorch"]
+            recommendations = ["tensorflow/tensorflow", "keras-team/keras", "pytorch/pytorch", "huggingface/transformers", "scikit-learn/scikit-learn", "pandas-dev/pandas", "numpy/numpy"]
+            return recommendations[:top_k]
 
         except Exception as e:
             raise e

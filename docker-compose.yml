@@ -4,16 +4,6 @@ services:
     ports:
       - "5000:5000"
     environment:
-      - MONGO_URI=mongodb://db:27017/
-    depends_on:
-      - db
-
-  db:
-    image: mongo:latest
-    ports:
-      - "27017:27017"
-    volumes:
-      - mongodb_data:/data/db
-
-volumes:
-  mongodb_data:
+      - MONGO_URI=mongodb+srv://admin:D9kMALfOPdMQRIM7@cluster0.r0n6dtn.mongodb.net/?appName=Cluster0
+    # depends_on:
+    #   - db

@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configuration de la Recommandation</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        .favorites-list {
+            text-align: left;
+            margin: 1.5rem 0;
+            max-height: 200px;
+            overflow-y: auto;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 0.5rem;
+            background: #fcfcfc;
+        }
+        .favorite-item {
+            padding: 0.5rem;
+            border-bottom: 1px solid #eee;
+            font-size: 0.9rem;
+        }
+        .favorite-item:last-child {
+            border-bottom: none;
+        }
+        .slider-container {
+            margin: 2rem 0;
+            text-align: left;
+        }
+        .slider-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+        input[type=range] {
+            width: 100%;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="main-wrapper wide-layout">
+        <div class="card intro-card">
+            <h1>⚙️ Configuration</h1>
+            <p class="subtitle">Paramétrez votre recommandation pour <strong>{{ username }}</strong></p>
+
+            <div class="favorites-section">
+                <h3>Vos dépôts favoris ({{ current_repos|length }}) :</h3>
+                <div class="favorites-list">
+                    {% if current_repos %}
+                        {% for repo in current_repos %}
+                            <div class="favorite-item">⭐ {{ repo }}</div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="favorite-item" style="color: var(--text-secondary);">Aucun dépôt favori trouvé.</div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <form action="/predict" method="post" class="predict-form">
+                <input type="hidden" name="username" value="{{ username }}">
+                
+                <div class="slider-container">
+                    <div class="slider-label">
+                        <label for="k_slider">Nombre de recommandations : <span id="k_value" style="color: var(--primary-color);">5</span></label>
+                    </div>
+                    <input type="range" id="k_slider" name="k" min="1" max="20" value="5" oninput="document.getElementById('k_value').textContent = this.value">
+                </div>
+
+                <button type="submit" class="btn-primary">🚀 Lancer la recommandation</button>
+            </form>
+
+            <div class="actions" style="margin-top: 1.5rem;">
+                <a href="/" class="btn-ghost">⬅️ Annuler</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
