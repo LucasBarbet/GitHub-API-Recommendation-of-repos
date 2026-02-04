@@ -1,9 +1,0 @@
-services:
-  web:
-    build: .
-    ports:
-      - "5000:5000"
-    environment:
-      - MONGO_URI=mongodb+srv://admin:D9kMALfOPdMQRIM7@cluster0.r0n6dtn.mongodb.net/?appName=Cluster0
-    # depends_on:
-    #   - db
