@@ -24,3 +24,6 @@ class Recommendation(BaseModel):
 class PredictOutput(BaseModel):
     user: str
     recommendations: List[str] # Simple list of strings for now as per current pipeline output
+
+class RepoInput(BaseModel):
+    repo_name: str

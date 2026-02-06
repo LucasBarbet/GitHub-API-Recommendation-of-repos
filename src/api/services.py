@@ -43,6 +43,24 @@ class UserService:
         # distinct("repos") will return a list of all items found in the 'repos' array across all documents
         return self.collection.distinct("repos")
 
+    def add_repo_to_user(self, username: str, repo_name: str) -> bool:
+        """
+        Add a repository to the user's list if it doesn't already exist.
+        Returns True if successful (or if already exists), False if user not found.
+        """
+        import logging
+        logger = logging.getLogger("uvicorn")
+        logger.info(f"DEBUG: Attempting to add repo {repo_name} to user {username}")
+        # Use upsert=True to create the user if they don't exist (self-healing)
+        result = self.collection.update_one(
+            {"_id": username},
+            {"$addToSet": {"repos": repo_name}},
+            upsert=True
+        )
+        logger.info(f"DEBUG: Update result matched_count: {result.matched_count}, upserted_id: {result.upserted_id}, raw_result: {result.raw_result}")
+        # Success if we matched (updated) or upserted (created)
+        return result.matched_count > 0 or result.upserted_id is not None
+
 
 class RecommendationService:
     def __init__(self):

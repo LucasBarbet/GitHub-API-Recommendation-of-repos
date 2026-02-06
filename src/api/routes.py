@@ -2,7 +2,7 @@ from typing import Annotated, cast
 from fastapi import APIRouter, Depends, Query, HTTPException, status, Request
 
 from src.api.services import UserService, RecommendationService
-from src.api.models import UserInput, UserOutput, PredictInput, PredictOutput
+from src.api.models import UserInput, UserOutput, PredictInput, PredictOutput, RepoInput
 
 # Dependency Injection for Services
 def get_user_service(request: Request) -> UserService:
@@ -29,6 +29,20 @@ async def add_user(user: UserInput, service: UserServiceDep):
     if not success:
         raise HTTPException(status_code=409, detail="User already exists")
     return {"message": f"User {user.username} created successfully"}
+
+@router.post("/users/{username}/repos")
+async def add_repo(username: str, input_data: RepoInput, service: UserServiceDep):
+    import logging
+    logger = logging.getLogger("uvicorn")
+    logger.info(f"DEBUG Route: Received request to add {input_data.repo_name} for {username}")
+    
+    success = service.add_repo_to_user(username, input_data.repo_name)
+    if not success:
+        logger.error(f"DEBUG Route: Failed to add repo for {username}")
+        raise HTTPException(status_code=404, detail="User not found (Update failed)")
+    
+    logger.info(f"DEBUG Route: Successfully added repo for {username}")
+    return {"message": "Repository added successfully"}
 
 @router.post("/predict", response_model=PredictOutput)
 async def predict(input_data: PredictInput, 

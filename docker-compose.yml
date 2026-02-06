@@ -4,6 +4,8 @@ services:
     command: uvicorn src.api.main:app --host 0.0.0.0 --port 8000
     ports:
       - "8000:8000"
+    volumes:
+      - .:/app
     environment:
       - MONGO_URI=${MONGO_URI}
       - PYTHONPATH=/app
@@ -13,6 +15,8 @@ services:
     # command: python app.py (default from Dockerfile)
     ports:
       - "5000:5000"
+    volumes:
+      - .:/app
     environment:
       - API_URL=http://api:8000
     depends_on:

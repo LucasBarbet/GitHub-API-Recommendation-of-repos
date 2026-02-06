@@ -5,6 +5,7 @@ WORKDIR /app
 
 ENV UV_COMPILE_BYTECODE=1
 ENV UV_LINK_MODE=copy
+ENV UV_PROJECT_ENVIRONMENT="/venv"
 
 COPY pyproject.toml uv.lock ./
 
@@ -23,7 +24,7 @@ FROM python:3.11-slim
 
 WORKDIR /app
 
-COPY --from=builder /app/.venv /app/.venv
+COPY --from=builder /venv /venv
 
 COPY src/ ./src/
 COPY config/ ./config/
@@ -31,7 +32,7 @@ COPY templates/ ./templates/
 COPY static/ ./static/
 COPY app.py params.yaml schema.yaml ./
 
-ENV PATH="/app/.venv/bin:$PATH" \
+ENV PATH="/venv/bin:$PATH" \
     PYTHONPATH="/app/src:/app" \
     PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \

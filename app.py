@@ -1,6 +1,6 @@
 import os
 import requests
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, jsonify
 
 app = Flask(__name__)
 
@@ -28,6 +28,27 @@ def prepare_prediction():
             return render_template('index.html', error=f"Erreur DB: {response.text}", username=username)
     except requests.exceptions.RequestException as e:
         return render_template('index.html', error=f"Erreur de connexion API: {e}", username=username)
+
+@app.route('/add_favorite', methods=['POST'])
+def add_favorite():
+    try:
+        data = request.get_json()
+        username = data.get('username')
+        repo_name = data.get('repo_name')
+        
+        if not username or not repo_name:
+            return jsonify({"error": "Missing data"}), 400
+
+        # Call API to add repo
+        response = requests.post(f"{API_URL}/api/users/{username}/repos", json={"repo_name": repo_name})
+        
+        if response.status_code == 200:
+            return jsonify({"success": True})
+        else:
+            return jsonify({"error": response.text}), response.status_code
+            
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 @app.route('/predict', methods=['POST'])
 def predict():
