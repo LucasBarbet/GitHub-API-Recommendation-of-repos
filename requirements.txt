@@ -17,4 +17,8 @@ Flask
 Flask-Cors
 torch
 scipy
+requests
+fastapi
+uvicorn
+pydantic
 -e .

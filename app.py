@@ -1,62 +1,56 @@
+import os
+import requests
 from flask import Flask, render_template, request
-from src.GitHubAPIRecommendationOfRepos.components.prediction import PredictionPipeline
-from src.GitHubAPIRecommendationOfRepos.utils.db_connector import get_database
-from src.GitHubAPIRecommendationOfRepos.constants import MONGO_COLLECTION_NAME
 
 app = Flask(__name__)
+
+# Backend API URL (default to internal docker alias if not set)
+API_URL = os.environ.get("API_URL", "http://api:8000")
 
 @app.route('/')
 def home():
     return render_template('index.html')
 
-import sys
-
 @app.route('/prepare_prediction', methods=['POST'])
 def prepare_prediction():
     username = request.form.get('username', '').strip()
-    sys.stderr.write(f"DEBUG: prepare_prediction called with username='{username}'\n")
     
-    db = get_database()
-    # Recherche par "_id" (le nom d'utilisateur est stocké dans _id)
-    user_data = db[MONGO_COLLECTION_NAME].find_one({"_id": username})
-    sys.stderr.write(f"DEBUG: user_data found: {user_data}\n")
-
-    if not user_data:
-        sys.stderr.write("DEBUG: User not found, returning index.html with error\n")
-        return render_template('index.html', error="Utilisateur introuvable !", username=username)
-
-    current_repos = user_data.get('repos', [])
-    return render_template('recommendation_setup.html', username=username, current_repos=current_repos)
+    # Call API to get user details
+    try:
+        response = requests.get(f"{API_URL}/api/users/{username}")
+        if response.status_code == 200:
+            user_data = response.json()
+            current_repos = user_data.get('repos', [])
+            return render_template('recommendation_setup.html', username=username, current_repos=current_repos)
+        elif response.status_code == 404:
+             return render_template('index.html', error="Utilisateur introuvable !", username=username)
+        else:
+            return render_template('index.html', error=f"Erreur DB: {response.text}", username=username)
+    except requests.exceptions.RequestException as e:
+        return render_template('index.html', error=f"Erreur de connexion API: {e}", username=username)
 
 @app.route('/predict', methods=['POST'])
 def predict():
-    # 1. Récupérer l'entrée utilisateur
     username = request.form.get('username')
     try:
         top_k = int(request.form.get('k', 5))
     except ValueError:
         top_k = 5
     
-    # 2. Récupérer les infos de cet utilisateur dans MONGO
-    db = get_database()
-    # Recherche par "_id"
-    user_data = db[MONGO_COLLECTION_NAME].find_one({"_id": username})
-
-    if not user_data:
-        return render_template('index.html', error="Utilisateur introuvable dans la base !")
-
-    current_repos = user_data.get('repos', [])
-
-    # 3. Faire la prédiction via le composant
-    pipeline = PredictionPipeline()
+    # Call API to predict
+    payload = {"user": username, "k": top_k}
     try:
-        recommendations = pipeline.predict(username, current_repos, top_k=top_k)
-    except TypeError: # Fallback if predict doesn't support top_k yet
-        recommendations = pipeline.predict(username, current_repos)
-        recommendations = recommendations[:top_k] # Slice result if needed
-
-    # 4. Afficher les résultats
-    return render_template('results.html', username=username, recommendations=recommendations)
+        response = requests.post(f"{API_URL}/api/predict", json=payload)
+        if response.status_code == 200:
+            result = response.json()
+            recommendations = result.get('recommendations', [])
+            return render_template('results.html', username=username, recommendations=recommendations)
+        elif response.status_code == 404:
+            return render_template('index.html', error="Utilisateur introuvable pour la prédiction !")
+        else:
+             return render_template('index.html', error=f"Erreur de prédiction: {response.text}")
+    except requests.exceptions.RequestException as e:
+        return render_template('index.html', error=f"Erreur de connexion API: {e}")
 
 @app.route('/add_user', methods=['POST'])
 def add_user():
@@ -64,16 +58,18 @@ def add_user():
     if not username:
          return render_template('index.html', error="Veuillez entrer un nom d'utilisateur.")
     
-    db = get_database()
-    collection = db[MONGO_COLLECTION_NAME]
-    
-    # Vérification par "_id"
-    if collection.find_one({"_id": username}):
-        return render_template('index.html', error=f"L'utilisateur {username} existe déjà !")
-        
-    # Insertion avec "_id" = username
-    collection.insert_one({"_id": username, "repos": []})
-    return render_template('index.html', success=f"Utilisateur {username} ajouté avec succès !")
+    # Call API to add user
+    payload = {"username": username}
+    try:
+        response = requests.post(f"{API_URL}/api/users", json=payload)
+        if response.status_code == 201:
+            return render_template('index.html', success=f"Utilisateur {username} ajouté avec succès !")
+        elif response.status_code == 409:
+            return render_template('index.html', error=f"L'utilisateur {username} existe déjà !")
+        else:
+            return render_template('index.html', error=f"Erreur d'ajout: {response.text}")
+    except requests.exceptions.RequestException as e:
+        return render_template('index.html', error=f"Erreur de connexion API: {e}")
 
 @app.route('/dashboard')
 def dashboard():

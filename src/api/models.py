@@ -1,51 +1,26 @@
-from datetime import UTC
-from datetime import datetime
-from enum import StrEnum
 from typing import Annotated
 from typing import List
 
 from pydantic import BaseModel
 from pydantic import Field
 
+class UserInput(BaseModel):
+    username: Annotated[str, Field(min_length=1, description="GitHub Username")]
+
+class UserOutput(BaseModel):
+    username: str
+    repos: List[str]
+
 class PredictInput(BaseModel):
-    user: Annotated[
-        str,
-        Field(
-            min_length=1,
-            max_length=100,
-            description="Nom de l'utilisateur"
-        )
-    ]
-    k: Annotated[
-        int,
-        Field(
-            ge=1,
-            le=20,
-            default=5,
-            description="Nombre de recommandations"
-        )
-    ]
+    user: Annotated[str, Field(min_length=1, description="Nom de l'utilisateur")]
+    k: Annotated[int, Field(ge=1, le=20, default=5, description="Nombre de recommandations")]
+    # Optional: pass repos directly if we want to avoid DB lookup in predict service, 
+    # but for now we follow the plan where service does lookup.
 
 class Recommendation(BaseModel):
     title: str
-    confidence: Annotated[float, Field(ge=0, le=1)]
+    confidence: float = 0.0 # Pipeline might not return confidence yet, optional
 
 class PredictOutput(BaseModel):
     user: str
-    probability: Annotated[
-        float,
-        Field(ge=0, le=1, description="Probability")
-    ]
-    recommendations: List[Recommendation]
-
-class ModelInfoOutput(BaseModel):
-    model_name: str
-    model_version: str | None = None
-    run_id: str | None = None
-    mlflow_ui_url: str
-    artifact_uri: str | None = None
-    registered_at: int | None = None
-
-
-
-
+    recommendations: List[str] # Simple list of strings for now as per current pipeline output

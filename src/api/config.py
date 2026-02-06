@@ -1,4 +1,4 @@
-from src.utils import EnvironmentVariable
+from src.GitHubAPIRecommendationOfRepos.utils.common import EnvironmentVariable
 
 API_TITLE = "SVD API"
 API_VERSION = "0.1"

@@ -1,55 +1,50 @@
-from datetime import UTC
-from datetime import datetime
-from typing import Annotated
-from typing import cast
+from typing import Annotated, cast
+from fastapi import APIRouter, Depends, Query, HTTPException, status, Request
 
-from fastapi import APIRouter
-from fastapi import Depends
-from fastapi import Request
-from fastapi import status
+from src.api.services import UserService, RecommendationService
+from src.api.models import UserInput, UserOutput, PredictInput, PredictOutput
 
-from src.api.dal import SVDClassifierService
-from src.api.models import PredictInput
-from src.api.models import PredictOutput
-from src.api.models import Recommendation
-from src.api.models import ModelInfoOutput
+# Dependency Injection for Services
+def get_user_service(request: Request) -> UserService:
+    return request.app.state.user_service
 
-def get_classifier_service(request: Request) -> SVDClassifierService:
-    if not hasattr(request.app.state, "classifier_service"):
-        raise ModelNotLoadedError("Classifier service not initialized")
-    return cast(SVDClassifierService, request.app.state.classifier_service)
+def get_recommendation_service(request: Request) -> RecommendationService:
+    return request.app.state.recommendation_service
 
-ClassifierServiceDep = Annotated[SVDClassifierService, Depends(get_classifier_service)]
+UserServiceDep = Annotated[UserService, Depends(get_user_service)]
+RecommendationServiceDep = Annotated[RecommendationService, Depends(get_recommendation_service)]
 
-router = APIRouter(prefix="/api", tags=["predictions"])
+router = APIRouter(prefix="/api", tags=["github-recommender"])
 
-@router.post("/predict", response_model=PredictOutput, status_code=status.HTTP_200_OK)
-async def predict(
-    classifier: ClassifierServiceDep,
-    request: PredictInput,
-) -> PredictOutput:
-    result = classifier.predict(request.user,request.k)
-    recommendations = [
-        Recommendation(
-            title=r["title"],
-            confidence=r["confidence"],
-        )
-        for r in result["recommendations"]
-    ]
+@router.get("/users/{username}", response_model=UserOutput)
+async def get_user(username: str, service: UserServiceDep):
+    repos = service.get_user_repos(username)
+    if repos is None:
+        raise HTTPException(status_code=404, detail="User not found")
+    return UserOutput(username=username, repos=repos)
 
-    return PredictOutput(
-        user=request.user,
-        probability=result["probability"],
-        recommendations=recommendations,
-    )
+@router.post("/users", status_code=status.HTTP_201_CREATED)
+async def add_user(user: UserInput, service: UserServiceDep):
+    success = service.add_user(user.username)
+    if not success:
+        raise HTTPException(status_code=409, detail="User already exists")
+    return {"message": f"User {user.username} created successfully"}
 
-@router.get("/model/info", response_model=ModelInfoOutput, status_code=status.HTTP_200_OK)
-async def model_info(classifier: ClassifierServiceDep) -> ModelInfoOutput:
-    return ModelInfoOutput(
-        model_name="SVD",
-        model_version=classifier.model_version,
-        run_id=classifier.run_id,
-        mlflow_ui_url=f"{MLFLOW_UI_BASE}/#/runs/{classifier.run_id}" if classifier.run_id else MLFLOW_UI_BASE,
-        artifact_uri=classifier.artifact_uri,
-        registered_at=classifier.registered_at,
-    )
+@router.post("/predict", response_model=PredictOutput)
+async def predict(input_data: PredictInput, 
+                  user_service: UserServiceDep, 
+                  rec_service: RecommendationServiceDep):
+    
+    # 1. Fetch user repos (backend verification)
+    repos = user_service.get_user_repos(input_data.user)
+    if repos is None:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    # 2. Run prediction
+    recommendations = rec_service.predict(input_data.user, repos, top_k=input_data.k)
+    
+    return PredictOutput(user=input_data.user, recommendations=recommendations)
+
+@router.get("/health")
+async def health():
+    return {"status": "ok"}
