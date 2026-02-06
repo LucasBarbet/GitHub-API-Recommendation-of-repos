@@ -40,8 +40,14 @@ async def predict(input_data: PredictInput,
     if repos is None:
         raise HTTPException(status_code=404, detail="User not found")
     
-    # 2. Run prediction
-    recommendations = rec_service.predict(input_data.user, repos, top_k=input_data.k)
+    # 2. Fetch all repos (candidates)
+    # In a real heavy production system, we wouldn't fetch ALL repos every time. 
+    # We might use a pre-computed list or a vector search.
+    # For this SVD implementation without an item map file, we need the candidates from DB.
+    all_repos = user_service.get_all_repos()
+
+    # 3. Run prediction
+    recommendations = rec_service.predict(input_data.user, repos, all_repos=all_repos, top_k=input_data.k)
     
     return PredictOutput(user=input_data.user, recommendations=recommendations)
 

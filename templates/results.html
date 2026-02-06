@@ -9,29 +9,36 @@
 </head>
 
 <body>
-    <div class="container">
-        <header>
+    <div class="main-wrapper wide-layout">
+        <header style="text-align: center; margin-bottom: 2rem;">
             <h1>🚀 Recommandations pour <span>{{ username }}</span></h1>
-            <p>Basé sur vos dépôts actuels, voici ce qui pourrait vous intéresser :</p>
+            <p class="subtitle">Voici les pépites GitHub sélectionnées pour vous</p>
         </header>
 
         {% if recommendations %}
         <div class="results-grid">
             {% for repo in recommendations %}
             <div class="repo-card">
-                <h3>{{ repo }}</h3>
-                <p>Projet suggéré par notre IA</p>
-                <a href="https://github.com/{{ repo }}" target="_blank" class="btn-github">Voir sur GitHub</a>
+                <div class="repo-rank">{{ loop.index }}</div>
+                <h3 class="repo-title">{{ repo }}</h3>
+                <p class="repo-desc">Dépôt recommandé basé sur vos intérêts.</p>
+                <div style="margin-top: auto;">
+                    <a href="https://github.com/{{ repo }}" target="_blank" class="btn-github">
+                        Voir sur GitHub ↗
+                    </a>
+                </div>
             </div>
             {% endfor %}
         </div>
         {% else %}
-        <div class="no-results">
-            <p>Aucune recommandation trouvée pour le moment.</p>
+        <div class="card intro-card">
+            <div class="no-results">
+                <p>Aucune recommandation trouvée pour le moment.</p>
+            </div>
         </div>
         {% endif %}
 
-        <div class="actions">
+        <div class="actions" style="text-align: center;">
             <a href="/" class="btn-back">⬅️ Nouvelle recherche</a>
         </div>
     </div>

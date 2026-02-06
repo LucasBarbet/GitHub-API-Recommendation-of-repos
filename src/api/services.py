@@ -2,7 +2,6 @@ import os
 import sys
 from typing import List, Optional
 from pymongo import MongoClient
-import pandas as pd
 
 from src.GitHubAPIRecommendationOfRepos.constants import MONGO_DATABASE_NAME, MONGO_COLLECTION_NAME
 from src.GitHubAPIRecommendationOfRepos.components.prediction import PredictionPipeline
@@ -37,19 +36,31 @@ class UserService:
         self.collection.insert_one({"_id": username, "repos": []})
         return True
 
+    def get_all_repos(self) -> List[str]:
+        """
+        Fetch all unique repositories from MongoDB.
+        """
+        # distinct("repos") will return a list of all items found in the 'repos' array across all documents
+        return self.collection.distinct("repos")
+
+
 class RecommendationService:
     def __init__(self):
         self.pipeline = PredictionPipeline()
 
-    def predict(self, username: str, user_repos: List[str], top_k: int = 5) -> List[str]:
+    def predict(self, username: str, user_repos: List[str], all_repos: List[str] = None, top_k: int = 5) -> List[str]:
         """
         Run the recommendation pipeline.
         """
+        if all_repos is None:
+            all_repos = []
+            
         try:
             # The pipeline currently returns a list of strings
-            recommendations = self.pipeline.predict(username, user_repos, top_k=top_k)
+            recommendations = self.pipeline.predict(username, user_repos, all_repos=all_repos, top_k=top_k)
             return recommendations
-        except TypeError:
-            # Fallback for older pipeline signature
+        except TypeError as e:
+            # Fallback for older pipeline signature or if new one fails oddly
+            print(f"Warning: Pipeline predict error: {e}")
             recommendations = self.pipeline.predict(username, user_repos)
             return recommendations[:top_k]
