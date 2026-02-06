@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from surprise import SVD
 from .config import settings
+import pickle
 
 
 def create_model() -> SVD:
@@ -15,3 +16,12 @@ def create_model() -> SVD:
 
 def fit_model(model: SVD, trainset):
     return model.fit(trainset)
+
+def save_model(model: SVD, path: str) -> None:
+    with open(path, "wb") as f:
+        pickle.dump(model, f)
+
+def load_model(path: str) -> SVD:
+    with open(path, "rb") as f:
+        model = pickle.load(f)
+    return model
