@@ -1,9 +1,19 @@
 services:
+  api:
+    build: .
+    command: uvicorn src.api.main:app --host 0.0.0.0 --port 8000
+    ports:
+      - "8000:8000"
+    environment:
+      - MONGO_URI=${MONGO_URI}
+      - PYTHONPATH=/app
+
   web:
     build: .
+    # command: python app.py (default from Dockerfile)
     ports:
       - "5000:5000"
     environment:
-      - MONGO_URI=mongodb+srv://admin:D9kMALfOPdMQRIM7@cluster0.r0n6dtn.mongodb.net/?appName=Cluster0
-    # depends_on:
-    #   - db
+      - API_URL=http://api:8000
+    depends_on:
+      - api
