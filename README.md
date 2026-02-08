@@ -6,16 +6,16 @@ L'objectif est de suggérer des dépôts pertinents à un utilisateur en analysa
 
 ## 📋 Table des matières
 
-- [Architecture du Projet](#-architecture-du-projet)
-- [Logique de Collecte & Données](#-logique-de-collecte--donn%C3%A9es)
-- [Modélisation (SVD)](#-mod%C3%A9lisation-svd)
-- [Installation](#-installation)
-- [Configuration](#-configuration)
-- [Utilisation](#-utilisation)
-- [API Reference](#-api-reference)
-- [Recherche et Expérimentation](#-recherche-et-exp%C3%A9rimentation)
+- [Architecture du Projet](#architecture-du-projet)
+- [Logique de Collecte & Données](#logique-de-collecte--données)
+- [Modélisation (SVD)](#modélisation-svd)
+- [Installation](#installation)
+- [Configuration](#configuration)
+- [Utilisation](#utilisation)
+- [API Reference](#api-reference)
+- [Recherche et Expérimentation](#recherche-et-expérimentation)
 
-## 📂 Architecture du Projet
+## <a id="architecture-du-projet"></a>📂 Architecture du Projet
 
 Le projet suit une structure modulaire, séparant l'API, le code d'entraînement, et l'application web.
 
@@ -43,7 +43,7 @@ Le projet suit une structure modulaire, séparant l'API, le code d'entraînement
 └── requirements.txt                   # Dépendances Python
 ```
 
-## 🔍 Logique de Collecte & Données
+## <a id="logique-de-collecte--données"></a>🔍 Logique de Collecte & Données
 
 ### Stratégie "Power Users"
 
@@ -74,7 +74,7 @@ Les données sont stockées dans une collection (par exemple `users`).
 }
 ```
 
-## 🧠 Modélisation (SVD)
+## <a id="modélisation-svd"></a>🧠 Modélisation (SVD)
 
 Le moteur de recommandation repose sur une approche de factorisation matricielle.
 
@@ -86,7 +86,7 @@ Nous utilisons TruncatedSVD de la bibliothèque **scikit-learn**.
 - **Réduction de dimension :** L'algorithme compresse cette matrice pour extraire les caractéristiques latentes (goûts cachés des utilisateurs).
 - **Prédiction :** Le produit scalaire des matrices réduites permet de prédire le score d'intérêt d'un utilisateur pour un dépôt non encore visité.
 
-## 🛠 Installation
+## <a id="installation"></a>🛠 Installation
 
 ### Option 1 : Docker (Recommandé)
 
@@ -125,7 +125,7 @@ Cela lancera :
     pip install -r requirements.txt
     ```
 
-## ⚙️ Configuration
+## <a id="configuration"></a>⚙️ Configuration
 
 ### Variables d'environnement
 Créez un fichier `.env` ou exportez vos variables pour la connexion à la base de données et l'API GitHub.
@@ -145,7 +145,7 @@ svd_model:
   random_state: 42
 ```
 
-## ▶️ Utilisation
+## <a id="utilisation"></a>▶️ Utilisation
 
 ### 1. Interface Web (Flask)
 
@@ -174,7 +174,7 @@ python src/GitHubAPIRecommendationOfRepos/train/main.py
 ```
 Note : Assurez-vous d'avoir les données nécessaires dans votre base MongoDB ou vos fichiers locaux.
 
-## 📡 API Reference
+## <a id="api-reference"></a>📡 API Reference
 
 L'API expose plusieurs endpoints pour interagir avec le système de recommandation :
 
@@ -186,7 +186,7 @@ L'API expose plusieurs endpoints pour interagir avec le système de recommandati
 
 Consultez le fichier `openapi.yaml` ou accédez à `/docs` une fois l'API lancée pour plus de détails.
 
-## 🔬 Recherche et Expérimentation
+## <a id="recherche-et-expérimentation"></a>🔬 Recherche et Expérimentation
 
 Le dossier `research/` contient des notebooks Jupyter pour l'analyse de données et le prototypage :
 
