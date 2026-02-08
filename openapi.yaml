@@ -1,0 +1,248 @@
+openapi: 3.0.3
+info:
+  title: SVD API
+  description: GitHub Repository Recommendation API
+  version: "0.1"
+servers:
+  - url: http://localhost:8000
+    description: Local server
+paths:
+  /api/health:
+    get:
+      summary: Health Check
+      operationId: health_check
+      tags:
+        - info
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+  /api/users/{username}:
+    get:
+      summary: Get User
+      operationId: get_user
+      tags:
+        - github-recommender
+      parameters:
+        - name: username
+          in: path
+          required: true
+          schema:
+            type: string
+            title: Username
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserOutput'
+        '404':
+          description: User not found
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/users:
+    post:
+      summary: Add User
+      operationId: add_user
+      tags:
+        - github-recommender
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserInput'
+        required: true
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        '409':
+          description: User already exists
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/users/{username}/repos:
+    post:
+      summary: Add Repo
+      operationId: add_repo
+      tags:
+        - github-recommender
+      parameters:
+        - name: username
+          in: path
+          required: true
+          schema:
+            type: string
+            title: Username
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RepoInput'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        '404':
+          description: User not found (Update failed)
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/predict:
+    post:
+      summary: Predict
+      operationId: predict
+      tags:
+        - github-recommender
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PredictInput'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PredictOutput'
+        '404':
+          description: User not found
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+components:
+  schemas:
+    HTTPValidationError:
+      title: HTTPValidationError
+      type: object
+      properties:
+        detail:
+          title: Detail
+          type: array
+          items:
+            $ref: '#/components/schemas/ValidationError'
+    PredictInput:
+      title: PredictInput
+      required:
+        - user
+      type: object
+      properties:
+        user:
+          title: User
+          minLength: 1
+          description: Nom de l'utilisateur
+          type: string
+        k:
+          title: K
+          maximum: 20
+          minimum: 1
+          default: 5
+          description: Nombre de recommandations
+          type: integer
+    PredictOutput:
+      title: PredictOutput
+      required:
+        - user
+        - recommendations
+      type: object
+      properties:
+        user:
+          title: User
+          type: string
+        recommendations:
+          title: Recommendations
+          type: array
+          items:
+            type: string
+    RepoInput:
+      title: RepoInput
+      required:
+        - repo_name
+      type: object
+      properties:
+        repo_name:
+          title: Repo Name
+          type: string
+    UserInput:
+      title: UserInput
+      required:
+        - username
+      type: object
+      properties:
+        username:
+          title: Username
+          minLength: 1
+          description: GitHub Username
+          type: string
+    UserOutput:
+      title: UserOutput
+      required:
+        - username
+        - repos
+      type: object
+      properties:
+        username:
+          title: Username
+          type: string
+        repos:
+          title: Repos
+          type: array
+          items:
+            type: string
+    ValidationError:
+      title: ValidationError
+      required:
+        - loc
+        - msg
+        - type
+      type: object
+      properties:
+        loc:
+          title: Location
+          type: array
+          items:
+            anyOf:
+              - type: string
+              - type: integer
+        msg:
+          title: Message
+          type: string
+        type:
+          title: Error Type
+          type: string

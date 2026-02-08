@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Résultats pour {{ username }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+    <div class="main-wrapper wide-layout">
+        <header style="text-align: center; margin-bottom: 2rem;">
+            <h1>🚀 Recommandations pour <span>{{ username }}</span></h1>
+            <p class="subtitle">Voici les pépites GitHub sélectionnées pour vous</p>
+        </header>
+
+        {% if recommendations %}
+        <div class="results-grid">
+            {% for repo in recommendations %}
+            <div class="repo-card">
+                <div class="repo-rank">{{ loop.index }}</div>
+                <h3 class="repo-title">{{ repo }}</h3>
+                <p class="repo-desc">Dépôt recommandé basé sur vos intérêts.</p>
+                <div style="margin-top: auto;">
+                    <button class="btn-favorite" onclick="addToFavorites(this, '{{ username }}', '{{ repo }}')">
+                        ❤️ Favoris
+                    </button>
+                    <a href="https://github.com/{{ repo }}" target="_blank" class="btn-github">
+                        Voir sur GitHub ↗
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="card intro-card">
+            <div class="no-results">
+                <p>Aucune recommandation trouvée pour le moment.</p>
+            </div>
+        </div>
+        {% endif %}
+
+        <div class="actions" style="text-align: center;">
+            <a href="/" class="btn-back">⬅️ Nouvelle recherche</a>
+        </div>
+    </div>
+
+    <script>
+        function addToFavorites(btn, username, repoName) {
+            btn.disabled = true;
+            btn.innerHTML = "⏳ Ajout...";
+
+            fetch('/add_favorite', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    username: username,
+                    repo_name: repoName
+                })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        btn.innerHTML = "✅ Ajouté !";
+                        btn.classList.add('added');
+                    } else {
+                        btn.innerHTML = "❌ Erreur";
+                        btn.disabled = false;
+                        alert("Erreur: " + (data.error || "Inconnue"));
+                    }
+                })
+                .catch(error => {
+                    btn.innerHTML = "❌ Erreur";
+                    btn.disabled = false;
+                    console.error('Error:', error);
+                });
+        }
+    </script>
+</body>
+
+</html>

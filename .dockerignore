@@ -1,0 +1,65 @@
+# Version management
+.git
+.github
+.gitignore
+.pre-commit-config.yaml
+.python-version
+
+# Environment
+.venv
+.env
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Python cache and artifacts
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Logs and databases
+logs/
+*.log
+*.sqlite
+
+# Testing and quality assurance
+.pytest_cache/
+.coverage
+htmlcov/
+test.py
+
+# Project specific irrelevant files for production
+research/
+notebooks/
+setup.py
+Dockerfile
+build_log.txt
+README.md
+LICENSE
+template.py
+main.py
+requirements.txt
+# requirements.txt is not used by uv sync, but okay to keep or ignore if uv.lock exists. 
+# Keeping it might be useful for reference but strictly not needed if using uv in docker. 
+# We'll ignore other top level scripts not used in app.py

@@ -6,38 +6,44 @@ L'objectif est de suggérer des dépôts pertinents à un utilisateur en analysa
 
 ## 📋 Table des matières
 
-- [Architecture du Projet](#-architecture-du-projet)
-- [Logique de Collecte & Données](#-logique-de-collecte--donn%C3%A9es)
-- [Modélisation (SVD)](#-mod%C3%A9lisation-svd)
-- [Installation](#-installation)
-- [Configuration](#-configuration)
-- [Utilisation](#-utilisation)
+- [Architecture du Projet](#architecture-du-projet)
+- [Logique de Collecte & Données](#logique-de-collecte--données)
+- [Modélisation (SVD)](#modélisation-svd)
+- [Installation](#installation)
+- [Configuration](#configuration)
+- [Utilisation](#utilisation)
+- [API Reference](#api-reference)
+- [Recherche et Expérimentation](#recherche-et-expérimentation)
 
-## 📂 Architecture du Projet
+## <a id="architecture-du-projet"></a>📂 Architecture du Projet
 
-Le projet suit une structure modulaire standard pour les pipelines de Machine Learning, séparant la configuration, le code source (src) et les expérimentations (research).
+Le projet suit une structure modulaire, séparant l'API, le code d'entraînement, et l'application web.
 
 ```text
-├── .github/workflows/ # CI/CD pipelines  
-├── config/ # Configuration globale (config.yaml)  
-├── research/ # Notebooks pour l'analyse exploratoire (trails.ipynb)  
-├── src/  
-│ └── githubRecommender/ # Package principal  
-│ ├── components/ # Modules logiques (Data Ingestion, Transformation, Model Trainer)  
-│ ├── config/ # Gestionnaires de configuration  
-│ ├── entity/ # Data Classes et entités  
-│ ├── pipeline/ # Orchestration des étapes (Train, Predict)  
-│ └── utils/ # Fonctions utilitaires communes  
-├── templates/ # Fichiers HTML pour l'interface Web (index.html)  
-├── app.py # Application Web (Flask/Streamlit)  
-├── main.py # Point d'entrée pour l'exécution du pipeline  
-├── params.yaml # Hyperparamètres du modèle SVD  
-├── schema.yaml # Schéma des données  
-├── Dockerfile # Conteneurisation de l'application  
-└── requirements.txt # Dépendances Python
+├── .github/workflows/                 # CI/CD pipelines
+├── config/                            # Configuration globale
+├── research/                          # Notebooks pour l'analyse et l'expérimentation
+├── src/
+│   ├── api/                           # Code de l'API (FastAPI)
+│   │   ├── main.py                    # Point d'entrée de l'API
+│   │   ├── routes.py                  # Définition des routes
+│   │   └── ...
+│   └── GitHubAPIRecommendationOfRepos/ # Package principal
+│       ├── components/                # Modules logiques (Ingestion, Transformation)
+│       ├── train/                     # Pipelines d'entraînement (SVD)
+│       ├── entity/                    # Entités de données
+│       └── utils/                     # Utilitaires
+├── templates/                         # Fichiers HTML pour l'interface Web
+├── static/                            # Fichiers statiques (CSS, JS)
+├── app.py                             # Application Web (Flask)
+├── docker-compose.yml                 # Orchestration Docker
+├── Dockerfile                         # Image Docker
+├── openapi.yaml                       # Spécification OpenAPI
+├── params.yaml                        # Hyperparamètres
+└── requirements.txt                   # Dépendances Python
 ```
 
-## 🔍 Logique de Collecte & Données
+## <a id="logique-de-collecte--données"></a>🔍 Logique de Collecte & Données
 
 ### Stratégie "Power Users"
 
@@ -68,80 +74,123 @@ Les données sont stockées dans une collection (par exemple `users`).
 }
 ```
 
-## 🧠 Modélisation (SVD)
+## <a id="modélisation-svd"></a>🧠 Modélisation (SVD)
 
 Le moteur de recommandation repose sur une approche de factorisation matricielle.
 
-\$\$M \\approx U \\Sigma V^T\$\$
+$$M \approx U \Sigma V^T$$
 
 Nous utilisons TruncatedSVD de la bibliothèque **scikit-learn**.
 
-- **Construction de la Matrice :** Transformation des données MongoDB en une "Sparse Matrix" (Utilisateurs \$\\times\$ Dépôts).
+- **Construction de la Matrice :** Transformation des données MongoDB en une "Sparse Matrix" (Utilisateurs $\times$ Dépôts).
 - **Réduction de dimension :** L'algorithme compresse cette matrice pour extraire les caractéristiques latentes (goûts cachés des utilisateurs).
 - **Prédiction :** Le produit scalaire des matrices réduites permet de prédire le score d'intérêt d'un utilisateur pour un dépôt non encore visité.
 
-## 🛠 Installation
+## <a id="installation"></a>🛠 Installation
 
-### Prérequis
+### Option 1 : Docker (Recommandé)
 
+Docker Compose permet de lancer l'API, l'application Web et (si configuré) une base de données locale.
+
+```bash
+docker-compose up --build
+```
+Cela lancera :
+- L'API sur `http://localhost:8000`
+- L'interface Web sur `http://localhost:5000`
+
+### Option 2 : Installation Locale
+
+#### Prérequis
 - Python 3.8+
 - MongoDB (Instance locale ou Atlas)
 - Compte GitHub (pour le Token API)
 
-### Étapes
+#### Étapes
 
-- Cloner le dépôt :  
-    Bash  
-    git clone <https://github.com/LucasBarbet/GitHub-API-Recommendation-of-repos.git>  
-    cd GitHub-API-Recommendation-of-repos  
+1. Cloner le dépôt :
+    ```bash
+    git clone https://github.com/LucasBarbet/GitHub-API-Recommendation-of-repos.git
+    cd GitHub-API-Recommendation-of-repos
+    ```
 
-- Créer un environnement virtuel et installer les dépendances :  
-    Bash  
-    python -m venv venv  
-    \# Windows  
-    venv\\Scripts\\activate  
-    \# Linux/Mac  
-    source venv/bin/activate  
-    <br/>pip install -r requirements.txt  
+2. Créer un environnement virtuel et installer les dépendances :
+    ```bash
+    python -m venv venv
+    # Windows
+    venv\Scripts\activate
+    # Linux/Mac
+    source venv/bin/activate
+    
+    pip install -r requirements.txt
+    ```
 
-## ⚙️ Configuration
+## <a id="configuration"></a>⚙️ Configuration
 
-- Variables d'environnement :  
-    Créez un fichier .env ou exportez vos variables pour la connexion à la base de données et l'API GitHub.  
-    Bash  
-    export GITHUB_TOKEN="votre_token_ici"  
-    export MONGO_URI="mongodb://localhost:27017/"  
+### Variables d'environnement
+Créez un fichier `.env` ou exportez vos variables pour la connexion à la base de données et l'API GitHub.
 
-- Paramètres du modèle :  
-    Modifiez params.yaml pour ajuster les hyperparamètres de la SVD (ex: nombre de composants).  
-    YAML  
-    svd_model:  
-    n_components: 50  
-    n_iter: 5  
-    random_state: 42  
+```bash
+export GITHUB_TOKEN="votre_token_ici"
+export MONGO_URI="mongodb://localhost:27017/"
+```
 
-## ▶️ Utilisation
+### Paramètres du modèle
+Modifiez `params.yaml` pour ajuster les hyperparamètres de la SVD (ex: nombre de composants).
 
-### 1\. Exécuter le Pipeline (ETL + Entraînement)
+```yaml
+svd_model:
+  n_components: 50
+  n_iter: 5
+  random_state: 42
+```
 
-Pour lancer la collecte des données, le traitement et l'entraînement du modèle via le point d'entrée principal :
+## <a id="utilisation"></a>▶️ Utilisation
 
-Bash
+### 1. Interface Web (Flask)
 
-python main.py  
+Pour utiliser l'interface graphique conviviale :
 
-_Cela déclenchera les pipelines définis dans src/.../pipeline/._
+```bash
+python app.py
+```
+Accédez à `http://localhost:5000` pour rechercher des utilisateurs, voir leurs favoris et obtenir des recommandations.
 
-### 2\. Lancer l'Application Web
+### 2. API (FastAPI)
 
-Pour utiliser l'interface graphique et visualiser les recommandations :
+Pour lancer le backend API séparément :
 
-Bash
+```bash
+uvicorn src.api.main:app --reload --host 0.0.0.0 --port 8000
+```
+La documentation interactive (Swagger UI) est disponible sur `http://localhost:8000/docs`.
 
-python app.py  
+### 3. Entraînement du Modèle
 
-L'application sera accessible sur <http://localhost:5000> (ou le port défini).
+Pour lancer le pipeline d'entraînement manuellement :
 
-### 3\. Expérimentation
+```bash
+python src/GitHubAPIRecommendationOfRepos/train/main.py
+```
+Note : Assurez-vous d'avoir les données nécessaires dans votre base MongoDB ou vos fichiers locaux.
 
-Les notebooks dans le dossier research/ (ex: trails.ipynb) peuvent être utilisés pour tester de nouvelles hypothèses ou visualiser la distribution des stars avant de modifier le code de production.
+## <a id="api-reference"></a>📡 API Reference
+
+L'API expose plusieurs endpoints pour interagir avec le système de recommandation :
+
+- `GET /api/health` : Vérifie l'état du service.
+- `GET /api/users/{username}` : Récupère les informations et les dépôts d'un utilisateur.
+- `POST /api/users` : Ajoute un nouvel utilisateur à la base.
+- `POST /api/users/{username}/repos` : Ajoute un dépôt aux favoris d'un utilisateur.
+- `POST /api/predict` : Génère des recommandations pour un utilisateur donné.
+
+Consultez le fichier `openapi.yaml` ou accédez à `/docs` une fois l'API lancée pour plus de détails.
+
+## <a id="recherche-et-expérimentation"></a>🔬 Recherche et Expérimentation
+
+Le dossier `research/` contient des notebooks Jupyter pour l'analyse de données et le prototypage :
+
+- `trails.ipynb` : Tests préliminaires et exploration.
+- `data.ipynb` : Analyse approfondie des données collectées.
+- `visualisation_data.ipynb` : Visualisation des distributions (stars, utilisateurs, etc.).
+- `transfert_BDD.ipynb` : Scripts pour la migration ou la manipulation de données en base.
