@@ -10,7 +10,7 @@ class UserService:
     def __init__(self):
         # Initialize DB connection using the same logic as db_connector
         # But here we encapsulate it in the service
-        mongo_uri = os.environ.get("MONGO_URI", "mongodb://localhost:27017/")
+        mongo_uri = os.environ.get("MONGO_URI") or "mongodb://localhost:27017/"
         self.client = MongoClient(mongo_uri)
         self.db = self.client[MONGO_DATABASE_NAME]
         self.collection = self.db[MONGO_COLLECTION_NAME]

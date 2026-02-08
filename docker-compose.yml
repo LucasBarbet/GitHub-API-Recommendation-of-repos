@@ -7,7 +7,7 @@ services:
     volumes:
       - .:/app
     environment:
-      - MONGO_URI=${MONGO_URI}
+      - MONGO_URI
       - PYTHONPATH=/app
 
   web:
