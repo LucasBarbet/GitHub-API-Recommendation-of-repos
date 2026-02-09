@@ -2,51 +2,37 @@ import os
 from pathlib import Path
 from ..utils.common import load_bin
 from ..entity.config_entity import ModelTrainerConfig, DataTransformationConfig
-from src.GitHubAPIRecommendationOfRepos.train.model import load_model
+import sys
+from typing import List, Optional
+from src.GitHubAPIRecommendationOfRepos.components.models import ModelLoader, BaseRecommender
 
 class PredictionPipeline:
     def __init__(self):
-        # Path to the SVD model manually placed
-        # Adjusting path relative to project root or using absolute path strategy if needed
-        # Here we assume the workspace structure is preserved
-        self.model_path = os.path.join("src", "GitHubAPIRecommendationOfRepos", "model", "svd_model.pkl")
+        # Base directory for models
+        self.model_dir = os.path.join("src", "GitHubAPIRecommendationOfRepos", "model")
         
-    def predict(self, username, user_repos, all_repos=None, top_k=5):
+    def predict(self, username: str, user_repos: List[str], all_repos: List[str] = None, top_k: int = 5, model_name: str = "svd_model") -> List[str]:
         """
-        Reçoit un utilisateur, ses repos, et une liste de tous les repos candidats.
-        Renvoie une recommandation basée sur le modèle SVD.
+        Generic predict method that delegates to the specific model implementation.
         """
         try:
-            if not os.path.exists(self.model_path):
-                raise FileNotFoundError(f"Model file not found at {self.model_path}")
+            # Construct model path based on name
+            # Assuming model names map to filenames like 'svd_model' -> 'svd_model.pkl'
+            filename = f"{model_name}.pkl"
+            model_path = os.path.join(self.model_dir, filename)
 
-            # 1. Load the SVD model
-            model = load_model(self.model_path)
+            if not os.path.exists(model_path):
+                 raise FileNotFoundError(f"Model file not found at {model_path}")
 
-            if not all_repos:
-                # Fallback if no candidates provided
-                return []
-
-            # 2. Filter out repos the user already has
-            user_repos_set = set(user_repos)
-            candidates = [repo for repo in all_repos if repo not in user_repos_set]
-
-            # 3. Predict score for each candidate
-            predictions = []
-            for repo in candidates:
-                # model.predict returns a Prediction object (uid, iid, r_ui, est, details)
-                pred = model.predict(username, repo)
-                predictions.append((repo, pred.est))
-
-            # 4. Sort by estimated score in descending order
-            predictions.sort(key=lambda x: x[1], reverse=True)
-
-            # 5. Return top k repo names
-            recommendations = [repo for repo, score in predictions[:top_k]]
+            # Get or Load the model via Factory
+            recommender = ModelLoader.get_model(model_name, model_path)
             
-            return recommendations
+            # Execute prediction
+            return recommender.predict(username, user_repos, all_repos, top_k)
 
         except Exception as e:
-            # Log the error potentially
-            print(f"Error in prediction: {e}")
+            print(f"Error in prediction pipeline: {e}")
+            # print stack trace for debugging
+            import traceback
+            traceback.print_exc()
             raise e

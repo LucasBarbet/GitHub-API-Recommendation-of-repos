@@ -1,0 +1,37 @@
+{
+  "0-o-0": [
+    "facebook/react-native",
+    "tensorflow/tensorflow",
+    "electron/electron",
+    "vinta/awesome-python",
+    "donnemartin/system-design-primer"
+  ],
+  "0-st": [
+    "awesome-selfhosted/awesome-selfhosted",
+    "oven-sh/bun",
+    "starship/starship",
+    "mermaid-js/mermaid",
+    "bigskysoftware/htmx"
+  ],
+  "0-vortex": [
+    "ollama/ollama",
+    "ggml-org/llama.cpp",
+    "cloudflare/pingora",
+    "open-webui/open-webui",
+    "rustdesk/rustdesk"
+  ],
+  "0000-bigtree": [
+    "airbnb/javascript",
+    "jondot/awesome-react-native",
+    "facebook/react-native",
+    "airbnb/lottie-web",
+    "typicode/json-server"
+  ],
+  "0000marcell": [
+    "astral-sh/ruff",
+    "pola-rs/polars",
+    "Aider-AI/aider",
+    "alacritty/alacritty",
+    "Textualize/rich"
+  ]
+}

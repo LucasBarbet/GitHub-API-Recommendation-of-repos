@@ -67,6 +67,17 @@
                 
                 <div class="slider-container">
                     <div class="slider-label">
+                        <label for="model_select">Choisir le modèle :</label>
+                    </div>
+                    <select name="model_name" id="model_select" style="width: 100%; padding: 0.5rem; border-radius: 5px; border: 1px solid #ccc;">
+                        {% for model in models %}
+                            <option value="{{ model }}" {% if model == 'svd_model' %}selected{% endif %}>{{ model }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <div class="slider-container">
+                    <div class="slider-label">
                         <label for="k_slider">Nombre de recommandations : <span id="k_value" style="color: var(--primary-color);">5</span></label>
                     </div>
                     <input type="range" id="k_slider" name="k" min="1" max="20" value="5" oninput="document.getElementById('k_value').textContent = this.value">

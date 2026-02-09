@@ -1,0 +1,39 @@
+artifact_path: file:///info/etu/m2/s2100554/mon_dossier/mlflow_store_reco/artifacts/models/m-9a9014f90b3847d2b80225e4e218c1e2/artifacts
+flavors:
+  python_function:
+    artifacts:
+      metadata_json:
+        path: artifacts/popularity_metadata.json
+        uri: /info/etu/m2/s2100554/mon_dossier/mlflow_store_reco/tmp_models/popularity_metadata.json
+      recommender_pkl:
+        path: artifacts/popularity.pkl
+        uri: /info/etu/m2/s2100554/mon_dossier/mlflow_store_reco/tmp_models/popularity.pkl
+    cloudpickle_version: 3.1.2
+    code: null
+    env:
+      conda: conda.yaml
+      virtualenv: python_env.yaml
+    loader_module: mlflow.pyfunc.model
+    python_model: python_model.pkl
+    python_version: 3.11.13
+    streamable: false
+is_signature_from_type_hint: false
+mlflow_version: 3.7.0
+model_id: m-9a9014f90b3847d2b80225e4e218c1e2
+model_size_bytes: 1195389
+model_uuid: m-9a9014f90b3847d2b80225e4e218c1e2
+prompts: null
+run_id: e794f7df5e6a431da51de7f604a406a3
+saved_input_example_info:
+  artifact_path: input_example.json
+  pandas_orient: split
+  serving_input_path: serving_input_example.json
+  type: dataframe
+signature:
+  inputs: '[{"type": "string", "name": "user", "required": true}, {"type": "double",
+    "name": "k", "required": true}]'
+  outputs: '[{"type": "string", "name": "user", "required": true}, {"type": "array",
+    "items": {"type": "string"}, "name": "recommendations", "required": true}]'
+  params: null
+type_hint_from_example: false
+utc_time_created: '2026-02-08 23:16:28.908339'

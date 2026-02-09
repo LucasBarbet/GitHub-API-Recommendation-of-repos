@@ -21,13 +21,24 @@ def prepare_prediction():
         if response.status_code == 200:
             user_data = response.json()
             current_repos = user_data.get('repos', [])
-            return render_template('recommendation_setup.html', username=username, current_repos=current_repos)
         elif response.status_code == 404:
              return render_template('index.html', error="Utilisateur introuvable !", username=username)
         else:
             return render_template('index.html', error=f"Erreur DB: {response.text}", username=username)
     except requests.exceptions.RequestException as e:
         return render_template('index.html', error=f"Erreur de connexion API: {e}", username=username)
+
+    # Fetch available models from API
+    try:
+        response = requests.get(f"{API_URL}/api/models")
+        if response.status_code == 200:
+            models = response.json().get("models", [])
+        else:
+            models = ["svd_model"]
+    except:
+        models = ["svd_model"]
+
+    return render_template('recommendation_setup.html', username=username, current_repos=current_repos, models=models)
 
 @app.route('/add_favorite', methods=['POST'])
 def add_favorite():
@@ -51,27 +62,26 @@ def add_favorite():
         return jsonify({"error": str(e)}), 500
 
 @app.route('/predict', methods=['POST'])
-def predict():
+def recommend():
     username = request.form.get('username')
-    try:
-        top_k = int(request.form.get('k', 5))
-    except ValueError:
-        top_k = 5
+    k = request.form.get('k', 5)
+    model_name = request.form.get('model_name', 'svd_model')
     
-    # Call API to predict
-    payload = {"user": username, "k": top_k}
+    payload = {
+        "user": username,
+        "k": int(k),
+        "model_name": model_name
+    }
+    
     try:
         response = requests.post(f"{API_URL}/api/predict", json=payload)
-        if response.status_code == 200:
-            result = response.json()
-            recommendations = result.get('recommendations', [])
-            return render_template('results.html', username=username, recommendations=recommendations)
-        elif response.status_code == 404:
-            return render_template('index.html', error="Utilisateur introuvable pour la prédiction !")
-        else:
-             return render_template('index.html', error=f"Erreur de prédiction: {response.text}")
-    except requests.exceptions.RequestException as e:
-        return render_template('index.html', error=f"Erreur de connexion API: {e}")
+        response.raise_for_status()
+        data = response.json()
+        recommendations = data.get('recommendations', [])
+        
+        return render_template('results.html', username=username, recommendations=recommendations, model_name=model_name)
+    except Exception as e:
+        return f"Error connecting to API: {e}", 500
 
 @app.route('/add_user', methods=['POST'])
 def add_user():
@@ -97,4 +107,61 @@ def dashboard():
     return render_template('dashboard.html')
 
 if __name__ == "__main__":
+    import subprocess
+    import socket
+    import threading
+    import platform
+    import sys
+
+    def is_port_in_use(port):
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+            return s.connect_ex(('localhost', port)) == 0
+
+    def start_mlflow_ui():
+        port = 5001
+        if not is_port_in_use(port):
+            print(f"Starting MLflow UI on port {port}...")
+            
+            # Use absolute path for DB
+            current_dir = os.path.dirname(os.path.abspath(__file__))
+            db_path = os.path.join(current_dir, "src", "mlflow_store_reco", "mlflow.db")
+            backend_store_uri = f"sqlite:///{db_path}"
+            
+            # Use absolute path for Artifact Root
+            artifact_root = os.path.join(current_dir, "src", "mlflow_store_reco")
+            
+            print(f"MLflow DB Path: {backend_store_uri}")
+            
+            # AUTOMATICALLY UPGRADE DB
+            try:
+                print("Upgrading MLflow database schema...")
+                upgrade_cmd = ["mlflow", "db", "upgrade", backend_store_uri]
+                subprocess.run(upgrade_cmd, check=True, stdout=sys.stdout, stderr=sys.stderr)
+                print("MLflow database upgrade successful.")
+            except subprocess.CalledProcessError as e:
+                print(f"Error upgrading MLflow database: {e}")
+            except FileNotFoundError:
+                print("mlflow command not found. Skipping DB upgrade.")
+
+            cmd = [
+                "mlflow", "ui",
+                "--backend-store-uri", backend_store_uri,
+                "--host", "0.0.0.0",
+                "--port", str(port)
+            ]
+            
+            # Run in background but redirect output to stdout/stderr so we can see it in docker logs
+            process = subprocess.Popen(
+                cmd,
+                stdout=sys.stdout,
+                stderr=sys.stderr,
+                text=True
+            )
+            print(f"MLflow UI started with PID: {process.pid}")
+        else:
+            print(f"MLflow UI port {port} is already in use.")
+
+    # Start MLflow in a separate thread to avoid blocking (though Popen is non-blocking, good to wrap setup)
+    start_mlflow_ui()
+    
     app.run(host="0.0.0.0", port=5000, debug=True)

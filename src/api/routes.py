@@ -3,6 +3,8 @@ from fastapi import APIRouter, Depends, Query, HTTPException, status, Request
 
 from src.api.services import UserService, RecommendationService
 from src.api.models import UserInput, UserOutput, PredictInput, PredictOutput, RepoInput
+import os
+from src.GitHubAPIRecommendationOfRepos.components.models import ModelLoader
 
 # Dependency Injection for Services
 def get_user_service(request: Request) -> UserService:
@@ -60,10 +62,26 @@ async def predict(input_data: PredictInput,
     # For this SVD implementation without an item map file, we need the candidates from DB.
     all_repos = user_service.get_all_repos()
 
-    # 3. Run prediction
-    recommendations = rec_service.predict(input_data.user, repos, all_repos=all_repos, top_k=input_data.k)
+    # 3. Run prediction with selected model
+    recommendations = rec_service.predict(
+        input_data.user, 
+        repos, 
+        all_repos=all_repos, 
+        top_k=input_data.k,
+        model_name=input_data.model_name
+    )
     
     return PredictOutput(user=input_data.user, recommendations=recommendations)
+
+@router.get("/models")
+async def list_models():
+    """
+    List available recommendation models (only those that load successfully).
+    """
+    # Scan via ModelLoader to get only valid models
+    model_dir = os.path.join("src", "GitHubAPIRecommendationOfRepos", "model")
+    models = ModelLoader.get_available_models(model_dir)
+    return {"models": models}
 
 @router.get("/health")
 async def health():

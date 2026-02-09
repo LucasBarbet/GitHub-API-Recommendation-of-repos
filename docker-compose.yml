@@ -9,15 +9,24 @@ services:
     environment:
       - MONGO_URI
       - PYTHONPATH=/app
+    networks:
+      - app-network
 
   web:
     build: .
     # command: python app.py (default from Dockerfile)
     ports:
       - "5000:5000"
+      - "5001:5001"
     volumes:
       - .:/app
     environment:
       - API_URL=http://api:8000
     depends_on:
       - api
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge

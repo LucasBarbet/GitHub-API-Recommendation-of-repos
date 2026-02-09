@@ -66,19 +66,13 @@ class RecommendationService:
     def __init__(self):
         self.pipeline = PredictionPipeline()
 
-    def predict(self, username: str, user_repos: List[str], all_repos: List[str] = None, top_k: int = 5) -> List[str]:
-        """
-        Run the recommendation pipeline.
-        """
-        if all_repos is None:
-            all_repos = []
-            
+    def predict(self, username: str, user_repos: List[str], all_repos: List[str], top_k: int = 5, model_name: str = "svd_model") -> List[str]:
         try:
-            # The pipeline currently returns a list of strings
-            recommendations = self.pipeline.predict(username, user_repos, all_repos=all_repos, top_k=top_k)
-            return recommendations
-        except TypeError as e:
+            return self.pipeline.predict(username, user_repos, all_repos, top_k, model_name=model_name)
+        except Exception as e:
             # Fallback for older pipeline signature or if new one fails oddly
             print(f"Warning: Pipeline predict error: {e}")
-            recommendations = self.pipeline.predict(username, user_repos)
-            return recommendations[:top_k]
+            # If standard prediction fails, try a fallback? Or just return empty.
+            # For now, let's re-raise or return empty safe list
+            print(f"Error during prediction: {e}")
+            return []

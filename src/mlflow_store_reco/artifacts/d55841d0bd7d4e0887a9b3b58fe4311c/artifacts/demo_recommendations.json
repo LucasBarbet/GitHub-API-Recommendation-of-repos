@@ -1,0 +1,37 @@
+{
+  "0-o-0": [
+    "huggingface/transformers.js",
+    "sindresorhus/awesome-chatgpt",
+    "sindresorhus/awesome-nodejs",
+    "sindresorhus/awesome-electron",
+    "junegunn/fzf.vim"
+  ],
+  "0-st": [
+    "shadowsocks/shadowsocks",
+    "shadowsocks/shadowsocks-windows",
+    "DIYgod/RSSHub-Radar",
+    "Openwrt-Passwall/openwrt-passwall",
+    "shadowsocks/shadowsocks-go"
+  ],
+  "0-vortex": [
+    "deepseek-ai/DeepSeek-Coder",
+    "deepseek-ai/DeepSeek-LLM",
+    "deepseek-ai/DeepSeek-OCR",
+    "deepseek-ai/DeepSeek-V3",
+    "deepseek-ai/DeepSeek-R1"
+  ],
+  "0000-bigtree": [
+    "Chalarangelo/30-seconds-of-react",
+    "react-boilerplate/react-boilerplate",
+    "Chalarangelo/30-seconds-of-python",
+    "cookiecutter/cookiecutter",
+    "cezaraugusto/You-Dont-Know-JS"
+  ],
+  "0000marcell": [
+    "rustdesk/rustdesk-server",
+    "uNetworking/uWebSockets.js",
+    "elastic/elasticsearch-js",
+    "huggingface/transformers.js",
+    "elastic/elasticsearch-php"
+  ]
+}

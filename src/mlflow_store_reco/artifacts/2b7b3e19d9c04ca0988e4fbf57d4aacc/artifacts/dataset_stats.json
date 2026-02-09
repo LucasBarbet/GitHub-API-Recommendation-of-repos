@@ -1,0 +1,8 @@
+{
+  "n_interactions": 10922585,
+  "n_train_interactions": 8738065,
+  "n_eval_interactions": 1092260,
+  "n_test_interactions": 1092260,
+  "n_users_train": 101236,
+  "n_repos_train": 11255
+}

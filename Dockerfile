@@ -16,7 +16,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 RUN --mount=type=cache,target=/root/.cache/uv \
     uv sync \
-    --frozen \
     --no-dev \
     --no-install-project
 
@@ -39,6 +38,7 @@ ENV PATH="/venv/bin:$PATH" \
     MONGO_URI="mongodb://host.docker.internal:27017/"
 
 EXPOSE 5000
+EXPOSE 5001
 
 HEALTHCHECK \
     --interval=30s \

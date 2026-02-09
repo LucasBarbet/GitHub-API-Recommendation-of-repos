@@ -14,6 +14,7 @@ class UserOutput(BaseModel):
 class PredictInput(BaseModel):
     user: Annotated[str, Field(min_length=1, description="Nom de l'utilisateur")]
     k: Annotated[int, Field(ge=1, le=20, default=5, description="Nombre de recommandations")]
+    model_name: Annotated[str, Field(default="svd_model", description="Nom du modèle")]
     # Optional: pass repos directly if we want to avoid DB lookup in predict service, 
     # but for now we follow the plan where service does lookup.
 
