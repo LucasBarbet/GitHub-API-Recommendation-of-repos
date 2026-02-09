@@ -1,0 +1,7 @@
+mlflow
+cloudpickle
+numpy
+pandas
+scipy
+scikit-learn
+scikit-surprise

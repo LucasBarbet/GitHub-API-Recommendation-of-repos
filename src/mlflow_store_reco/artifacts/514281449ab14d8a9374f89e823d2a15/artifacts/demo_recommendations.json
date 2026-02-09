@@ -1,0 +1,37 @@
+{
+  "0-o-0": [
+    "EbookFoundation/free-programming-books",
+    "twbs/bootstrap",
+    "airbnb/javascript",
+    "f/awesome-chatgpt-prompts",
+    "d3/d3"
+  ],
+  "0-st": [
+    "immich-app/immich",
+    "LadybirdBrowser/ladybird",
+    "karakeep-app/karakeep",
+    "jdx/mise",
+    "juanfont/headscale"
+  ],
+  "0-vortex": [
+    "anthropics/claude-code",
+    "modelcontextprotocol/servers",
+    "upstash/context7",
+    "deepseek-ai/DeepSeek-R1",
+    "cline/cline"
+  ],
+  "0000-bigtree": [
+    "puppeteer/puppeteer",
+    "storybookjs/storybook",
+    "axios/axios",
+    "airbnb/javascript",
+    "huginn/huginn"
+  ],
+  "0000marcell": [
+    "jesseduffield/lazygit",
+    "mermaid-js/mermaid",
+    "jdx/mise",
+    "valkey-io/valkey",
+    "oven-sh/bun"
+  ]
+}

@@ -1,0 +1,8 @@
+{
+  "seed": 43,
+  "n_users_eval_total": 101236,
+  "n_users_eval_used": 101236,
+  "n_train_repos": 11255,
+  "n_train_users": 101236,
+  "n_eval_interactions": 1092260
+}

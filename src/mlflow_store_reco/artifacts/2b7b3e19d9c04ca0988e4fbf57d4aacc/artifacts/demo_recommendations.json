@@ -1,0 +1,37 @@
+{
+  "0-o-0": [
+    "ollama/ollama",
+    "donnemartin/system-design-primer",
+    "n8n-io/n8n",
+    "codecrafters-io/build-your-own-x",
+    "public-apis/public-apis"
+  ],
+  "0-st": [
+    "ollama/ollama",
+    "donnemartin/system-design-primer",
+    "n8n-io/n8n",
+    "codecrafters-io/build-your-own-x",
+    "public-apis/public-apis"
+  ],
+  "0-vortex": [
+    "ollama/ollama",
+    "donnemartin/system-design-primer",
+    "n8n-io/n8n",
+    "codecrafters-io/build-your-own-x",
+    "public-apis/public-apis"
+  ],
+  "0000-bigtree": [
+    "ollama/ollama",
+    "donnemartin/system-design-primer",
+    "n8n-io/n8n",
+    "codecrafters-io/build-your-own-x",
+    "public-apis/public-apis"
+  ],
+  "0000marcell": [
+    "ollama/ollama",
+    "n8n-io/n8n",
+    "codecrafters-io/build-your-own-x",
+    "public-apis/public-apis",
+    "Significant-Gravitas/AutoGPT"
+  ]
+}

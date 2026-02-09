@@ -1,0 +1,39 @@
+artifact_path: file:///info/etu/m2/s2100554/mon_dossier/mlflow_store_reco/artifacts/models/m-c81eb8e13a654817aa8c3dd2b148ba01/artifacts
+flavors:
+  python_function:
+    artifacts:
+      metadata_json:
+        path: artifacts/tfidf_content_metadata.json
+        uri: /info/etu/m2/s2100554/mon_dossier/mlflow_store_reco/tmp_models/tfidf_content_metadata.json
+      recommender_pkl:
+        path: artifacts/tfidf_content.pkl
+        uri: /info/etu/m2/s2100554/mon_dossier/mlflow_store_reco/tmp_models/tfidf_content.pkl
+    cloudpickle_version: 3.1.2
+    code: code
+    env:
+      conda: conda.yaml
+      virtualenv: python_env.yaml
+    loader_module: mlflow.pyfunc.model
+    python_model: python_model.pkl
+    python_version: 3.11.13
+    streamable: false
+is_signature_from_type_hint: false
+mlflow_version: 3.7.0
+model_id: m-c81eb8e13a654817aa8c3dd2b148ba01
+model_size_bytes: 402286126
+model_uuid: m-c81eb8e13a654817aa8c3dd2b148ba01
+prompts: null
+run_id: f240102b5bf24bf0bfa0a2c41eea5b7f
+saved_input_example_info:
+  artifact_path: input_example.json
+  pandas_orient: split
+  serving_input_path: serving_input_example.json
+  type: dataframe
+signature:
+  inputs: '[{"type": "string", "name": "user", "required": true}, {"type": "double",
+    "name": "k", "required": true}]'
+  outputs: '[{"type": "string", "name": "user", "required": true}, {"type": "array",
+    "items": {"type": "string"}, "name": "recommendations", "required": true}]'
+  params: null
+type_hint_from_example: false
+utc_time_created: '2026-02-09 09:33:21.986790'
