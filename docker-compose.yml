@@ -17,6 +17,7 @@ services:
     # command: python app.py (default from Dockerfile)
     ports:
       - "5000:5000"
+      - "5001:5001"
     volumes:
       - .:/app
     environment:

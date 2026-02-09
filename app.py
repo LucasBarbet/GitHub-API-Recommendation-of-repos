@@ -107,4 +107,61 @@ def dashboard():
     return render_template('dashboard.html')
 
 if __name__ == "__main__":
+    import subprocess
+    import socket
+    import threading
+    import platform
+    import sys
+
+    def is_port_in_use(port):
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+            return s.connect_ex(('localhost', port)) == 0
+
+    def start_mlflow_ui():
+        port = 5001
+        if not is_port_in_use(port):
+            print(f"Starting MLflow UI on port {port}...")
+            
+            # Use absolute path for DB
+            current_dir = os.path.dirname(os.path.abspath(__file__))
+            db_path = os.path.join(current_dir, "src", "mlflow_store_reco", "mlflow.db")
+            backend_store_uri = f"sqlite:///{db_path}"
+            
+            # Use absolute path for Artifact Root
+            artifact_root = os.path.join(current_dir, "src", "mlflow_store_reco")
+            
+            print(f"MLflow DB Path: {backend_store_uri}")
+            
+            # AUTOMATICALLY UPGRADE DB
+            try:
+                print("Upgrading MLflow database schema...")
+                upgrade_cmd = ["mlflow", "db", "upgrade", backend_store_uri]
+                subprocess.run(upgrade_cmd, check=True, stdout=sys.stdout, stderr=sys.stderr)
+                print("MLflow database upgrade successful.")
+            except subprocess.CalledProcessError as e:
+                print(f"Error upgrading MLflow database: {e}")
+            except FileNotFoundError:
+                print("mlflow command not found. Skipping DB upgrade.")
+
+            cmd = [
+                "mlflow", "ui",
+                "--backend-store-uri", backend_store_uri,
+                "--host", "0.0.0.0",
+                "--port", str(port)
+            ]
+            
+            # Run in background but redirect output to stdout/stderr so we can see it in docker logs
+            process = subprocess.Popen(
+                cmd,
+                stdout=sys.stdout,
+                stderr=sys.stderr,
+                text=True
+            )
+            print(f"MLflow UI started with PID: {process.pid}")
+        else:
+            print(f"MLflow UI port {port} is already in use.")
+
+    # Start MLflow in a separate thread to avoid blocking (though Popen is non-blocking, good to wrap setup)
+    start_mlflow_ui()
+    
     app.run(host="0.0.0.0", port=5000, debug=True)
