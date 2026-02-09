@@ -21,13 +21,24 @@ def prepare_prediction():
         if response.status_code == 200:
             user_data = response.json()
             current_repos = user_data.get('repos', [])
-            return render_template('recommendation_setup.html', username=username, current_repos=current_repos)
         elif response.status_code == 404:
              return render_template('index.html', error="Utilisateur introuvable !", username=username)
         else:
             return render_template('index.html', error=f"Erreur DB: {response.text}", username=username)
     except requests.exceptions.RequestException as e:
         return render_template('index.html', error=f"Erreur de connexion API: {e}", username=username)
+
+    # Fetch available models from API
+    try:
+        response = requests.get(f"{API_URL}/api/models")
+        if response.status_code == 200:
+            models = response.json().get("models", [])
+        else:
+            models = ["svd_model"]
+    except:
+        models = ["svd_model"]
+
+    return render_template('recommendation_setup.html', username=username, current_repos=current_repos, models=models)
 
 @app.route('/add_favorite', methods=['POST'])
 def add_favorite():
@@ -51,27 +62,26 @@ def add_favorite():
         return jsonify({"error": str(e)}), 500
 
 @app.route('/predict', methods=['POST'])
-def predict():
+def recommend():
     username = request.form.get('username')
-    try:
-        top_k = int(request.form.get('k', 5))
-    except ValueError:
-        top_k = 5
+    k = request.form.get('k', 5)
+    model_name = request.form.get('model_name', 'svd_model')
     
-    # Call API to predict
-    payload = {"user": username, "k": top_k}
+    payload = {
+        "user": username,
+        "k": int(k),
+        "model_name": model_name
+    }
+    
     try:
         response = requests.post(f"{API_URL}/api/predict", json=payload)
-        if response.status_code == 200:
-            result = response.json()
-            recommendations = result.get('recommendations', [])
-            return render_template('results.html', username=username, recommendations=recommendations)
-        elif response.status_code == 404:
-            return render_template('index.html', error="Utilisateur introuvable pour la prédiction !")
-        else:
-             return render_template('index.html', error=f"Erreur de prédiction: {response.text}")
-    except requests.exceptions.RequestException as e:
-        return render_template('index.html', error=f"Erreur de connexion API: {e}")
+        response.raise_for_status()
+        data = response.json()
+        recommendations = data.get('recommendations', [])
+        
+        return render_template('results.html', username=username, recommendations=recommendations, model_name=model_name)
+    except Exception as e:
+        return f"Error connecting to API: {e}", 500
 
 @app.route('/add_user', methods=['POST'])
 def add_user():

@@ -9,6 +9,8 @@ services:
     environment:
       - MONGO_URI
       - PYTHONPATH=/app
+    networks:
+      - app-network
 
   web:
     build: .
@@ -21,3 +23,9 @@ services:
       - API_URL=http://api:8000
     depends_on:
       - api
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge

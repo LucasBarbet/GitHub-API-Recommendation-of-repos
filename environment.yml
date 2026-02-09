@@ -1,0 +1,29 @@
+name: recommender_env
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.11
+  - pip
+  - numpy<2.0
+  - pandas
+  - scikit-learn
+  - scikit-surprise
+  - flask
+  - requests
+  - pip:
+    - mlflow==2.2.2
+    - notebook
+    - pymongo
+    - python-box==6.0.2
+    - python-dotenv
+    - pyYAML
+    - tqdm
+    - ensure==1.0.2
+    - joblib
+    - flask-cors
+    - torch
+    - scipy
+    - fastapi
+    - uvicorn
+    - pydantic
